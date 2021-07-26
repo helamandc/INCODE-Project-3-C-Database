@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+    <!--Header-->
+    <%- include('../partials/header')%>
+        <!--Main-->
+        <main>
+            <h1><strong>Schedule Information</strong></h1>
+            <table class="data">
+                <tr>
+                    <th>User&nbsp;ID</th>
+                    <th>Day</th>
+                    <th>Start&nbsp;At</th>
+                    <th>End&nbsp;At</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <%=schedulesid.user_id%>
+                    </td>
+                    <td>
+                        <%=schedulesid.day%>
+                    </td>
+                    <td>
+                        <%=schedulesid.start_at%>
+                    </td>
+                    <td>
+                        <%=schedulesid.end_at%>
+                    </td>
+                </tr>
+
+            </table>
+        </main>
+        <!--Footer-->
+        <%- include('../partials/footer')%>
+</body>
+
+</html>

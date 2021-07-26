@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+    <!--Header-->
+    <%- include('../partials/header')%>
+        <!--Main-->
+        <main>
+            <h1><strong>Add New Schedule Information</strong></h1>
+
+            <form class="form" action="/schedules" method="post">
+                <div class="field">
+                    <label for="user_id">User Name* </label>
+                    <select id="user_id" name="user_id" required>
+                        <option value="">-- Select user --</option>
+                        <% for(let i=0; i < newUserData.length; i++) { %>
+                            <option value=<%=i %>> <%= newUserData[i].firstname %>
+                                    <%= newUserData[i].lastname %>
+                            </option>
+                            <% } %>
+
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="day">Day* </label>
+                    <select id="day" name="day" required>
+                        <option value="">-- Select day --</option>
+                        <option value="1">Monday</option>
+                        <option value="2">Tuesday</option>
+                        <option value="3">Wednesday</option>
+                        <option value="4">Thursday</option>
+                        <option value="5">Friday</option>
+                        <option value="6">Saturday</option>
+                        <option value="7">Sunday</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="start_at">Time in* </label>
+                    <input id="start_at" type="text" name="start_at" required placeholder="e.g. 2AM, 2PM">
+                </div>
+                <div class="field">
+                    <label for="end_at">Time out* </label>
+                    <input id="end_at" type="text" name="end_at" required placeholder="e.g. 2AM, 2PM">
+                </div>
+                <div>
+                    <button id="submit">Submit</button>
+                </div>
+            </form>
+        </main>
+        <!--Footer-->
+        <%- include('../partials/footer')%>
+</body>
+
+</html>
