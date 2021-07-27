@@ -29,9 +29,17 @@ app.get('/', (req, res) => {
 
 //all users
 app.get('/users', (req, res) => {
-    res.render('pages/users', {
-        users: data.users
-    })
+    db.any("SELECT * FROM usertable")
+        .then((usertabledata) => {
+            res.render('pages/users', {
+                users: usertabledata
+            })
+        })
+        .catch((err) => {
+            res.render("pages/error", {
+                errorid: err.message
+            })
+        })
 })
 
 //all schedules
@@ -43,9 +51,10 @@ app.get('/schedules', (req, res) => {
                 schedules: schedtabledata
             })
         })
-        .catch((test1) => {
-            console.log(error)
-            res.send(error.message)
+        .catch((err) => {
+            res.render("pages/error", {
+                errorid: err.message
+            })
         })
 })
 
@@ -54,18 +63,28 @@ app.get('/schedules', (req, res) => {
 app.get('/users/:id', (req, res) => {
     const id = req.params.id
     const error = '404 Page cannot be displayed'
-    if (id < data.users.length) {
-        res.render('pages/usersid', {
-            usersid: data.users[id],
+
+    db.any("SELECT * FROM usertable;")
+        .then((usertabledata) => {
+            if (id < usertabledata.length) {
+                res.render('pages/usersid', {
+                    usersid: usertabledata[id],
+                })
+            }
+            else if (id == 'new') {
+                res.render('pages/usersnew')
+            } else {
+                res.render('pages/error', {
+                    errorid: error
+                })
+            }
         })
-    }
-    else if (id == 'new') {
-        res.render('pages/usersnew')
-    } else {
-        res.render('pages/error', {
-            errorid: error
+        .catch((err) => {
+            res.render("pages/error", {
+                errorid: err.message
+            })
         })
-    }
+
 
 })
 
@@ -73,6 +92,8 @@ app.get('/users/:id', (req, res) => {
 app.get('/schedules/:id', (req, res) => {
     const id = req.params.id
     const error = '404 Page cannot be displayed'
+
+
 
     db.any("SELECT * FROM schedtable;")
         .then((scheddata) => {
@@ -82,10 +103,14 @@ app.get('/schedules/:id', (req, res) => {
                 })
             }
             else if (id == 'new') {
-                res.render('pages/schedulesnew', {
-                    newUserData: data.users,
-                    newSchedules: scheddata
-                })
+                db.any("SELECT * FROM usertable;")
+                    .then((datausers) => {
+                        res.render('pages/schedulesnew', {
+                            newUserData: datausers,
+                            newSchedules: scheddata
+                        })
+                    })
+
             } else {
                 res.render('pages/error', {
                     errorid: error
@@ -106,20 +131,43 @@ app.get('/users/:id/schedules', (req, res) => {
     const newSched = []
     const userId = req.params.id
     const error = '404 Page cannot be displayed'
-    for (let i = 0; i < data.schedules.length; i++) {
-        if (userId == data.schedules[i].user_id) {
-            newSched.push(data.schedules[i])
-        }
-    }
-    if (newSched.length == 0 || userId > data.users.length) {
-        res.render('pages/error', {
-            errorid: error
+
+    db.any("SELECT * FROM schedtable;")
+        .then((scheddatatable) => {
+            for (let i = 0; i < scheddatatable.length; i++) {
+                if (userId == scheddatatable[i].user_id) {
+                    newSched.push(scheddatatable[i])
+                }
+            }
         })
-    } else {
-        res.render('pages/useridsched', {
-            newSchedId: newSched
+        .catch((err) => {
+            res.render("pages/error", {
+                errorid: err.message
+            })
         })
-    }
+
+
+    db.any("SELECT * FROM usertable;")
+        .then((userdata) => {
+            if (newSched.length == 0 || userId > userdata.length) {
+                res.render('pages/error', {
+                    errorid: error
+                })
+            } else {
+                res.render('pages/useridsched', {
+                    newSchedId: newSched
+                })
+            }
+
+        })
+        .catch((err) => {
+            res.render("pages/error", {
+                errorid: err.message
+            })
+        })
+
+
+
 })
 
 //Add new schedule
@@ -145,18 +193,15 @@ app.post('/users', (req, res) => {
     const salt = bcrypt.genSaltSync(10)
     const hash = bcrypt.hashSync(password, salt)
 
-    const newUser = {
-        firstname: req.body.firstName,
-        lastname: req.body.lastName,
-        email: req.body.emailAddress,
-        password: hash
-    }
-
-    data.users.push(newUser)
-    res.render('pages/users', {
-        users: data.users
-    })
-
+    db.none("INSERT INTO usertable (firstname, lastname, email, password) VALUES ($1, $2, $3, $4)", [req.body.firstName, req.body.lastName, req.body.emailAddress, hash])
+        .then(() => {
+            res.redirect('/users')
+        })
+        .catch((err) => {
+            res.render("pages/error", {
+                errorid: err.message
+            })
+        })
 })
 
 //Making sure that we are connected to a local host

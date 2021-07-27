@@ -1,3 +1,4 @@
+
 CREATE TABLE IF NOT EXISTS schedtable (
     id SERIAL PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL,
@@ -6,10 +7,11 @@ CREATE TABLE IF NOT EXISTS schedtable (
     end_at VARCHAR(255) NOT NULL
 );
 
+
 CREATE TABLE IF NOT EXISTS usertable (
     id SERIAL PRIMARY KEY,
     firstname VARCHAR(255) NOT NULL,
     lastname VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL
 );
